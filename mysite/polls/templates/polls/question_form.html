@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Pregunta</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Añadir Nueva Pregunta</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div>
+                <label for="{{ question_form.question_text.id_for_label }}">¿Cuál es la nueva pregunta?</label>
+                {{ question_form.question_text }}
+            </div>
+            <div>
+                <label for="{{ question_form.pub_date.id_for_label }}">Fecha de publicación:</label>
+                {{ question_form.pub_date }}  <!-- Esto mostrará un campo de entrada de fecha -->
+            </div>
+
+            <h3>Opciones</h3>
+            {% for i in "012" %}
+                <div>
+                    <label for="choice_text_{{ forloop.counter }}">Opción {{ forloop.counter }}:</label>
+                    <input type="text" name="choice_text" id="choice_text_{{ forloop.counter }}" required>
+                </div>
+            {% endfor %}
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -6,6 +6,8 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 from .models import Choice, Question
 from django.http import Http404
+from django.shortcuts import render, redirect
+from .forms import QuestionForm, ChoiceForm
 
 # Create your views here.
 
@@ -91,3 +93,31 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+
+
+def question_view(request):
+    if request.method == "POST":
+        question_form = QuestionForm(request.POST)
+
+        # Obtener las opciones de texto
+        choice_texts = request.POST.getlist('choice_text')
+
+        if question_form.is_valid():
+            # Guardar la pregunta
+            question = question_form.save()
+
+            # Guardar las opciones
+            for choice_text in choice_texts:
+                if choice_text:  # Solo guardar si el texto de la opción no está vacío
+                    choice = Choice(question=question, choice_text=choice_text)
+                    choice.save()
+
+            return render(request, "polls/success.html")
+    else:
+        question_form = QuestionForm()
+        choice_forms = [ChoiceForm(prefix=str(i)) for i in range(3)]  # Inicialmente 3 opciones
+
+    return render(request, 'polls/question_form.html', {
+        'question_form': question_form,
+        'choice_forms': choice_forms,
+    })
